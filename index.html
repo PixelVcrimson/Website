@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+   <meta charset="UTF-8">
+   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Robloxスクリプトのサンプル</title>
+</head>
+<body>
+   <h1>Robloxスクリプトのサンプル</h1>
+   <h2>テレポートスクリプト</h2>
+   <p>このスクリプトは、プレイヤーを指定された場所にテレポートします。</p>
+   <pre><code id="teleport-script">
+   local teleportPart = game.Workspace.TeleportPart
+   function onTouched(otherPart)
+       local humanoid = otherPart.Parent:FindFirstChild("Humanoid")
+       if humanoid then
+           humanoid.RootPart.CFrame = teleportPart.CFrame
+       end
+   end
+
+   teleportPart.Touched:Connect(onTouched)
+
+   -- サーバー側スクリプト
+   local remoteEvent = game.ReplicatedStorage:WaitForChild("TeleportEvent")
+   remoteEvent.OnServerEvent:Connect(function(player)
+       local character = player.Character
+       if character and character:FindFirstChild("HumanoidRootPart") then
+           character.HumanoidRootPart.CFrame = teleportPart.CFrame
+       end
+   end)
+   </code></pre>
+   <button onclick="copyToClipboard('teleport-script')">コピーする</button>
+
+   <h2>レーザーガンスクリプト</h2>
+   <p>このスクリプトは、クリックした場所にレーザーを発射します。</p>
+   <pre><code id="gun-script">
+   local mouse = game.Players.LocalPlayer:GetMouse()
+   local gun = script.Parent
+   local beam = gun.Beam
+   function onClick()
+       local ray = Ray.new(gun.Handle.Position, (mouse.Hit.p - gun.Handle.Position).Unit * 300)
+       beam.Enabled = true
+
+       -- クライアント側スクリプト
+       local remoteEvent = game.ReplicatedStorage:WaitForChild("LaserGunEvent")
+       remoteEvent:FireServer(ray)
+   end
+
+   gun.Activated:Connect(onClick)
+
+   -- サーバー側スクリプト
+   local remoteEvent = game.ReplicatedStorage:WaitForChild("LaserGunEvent")
+   remoteEvent.OnServerEvent:Connect(function(player, ray)
+       local hitPart, hitPosition, hitNormal = game.Workspace:FindPartOnRay(ray, game.Workspace)
+       if hitPart then
+           local newExplosion = Instance.new("Explosion")
+           newExplosion.Position = hitPart.Position
+           newExplosion.Parent = game.Workspace
+       end
+   end)
+   </code></pre>
+   <button onclick="copyToClipboard('gun-script')">コピーする</button>
+
+   <script>
+       function copyToClipboard(id) {
+           const code = document.getElementById(id).textContent.trim();
+           const textarea = document.createElement('textarea');
+           textarea.value = code;
+           document.body.appendChild(textarea);
+           textarea.select();
+           document.execCommand('copy');
+           document.body.removeChild(textarea);
+           alert('コピーしました！');
+       }
+   </script>
+</body
+<h2>レーザーガンスクリプト</h2>
+<p>このスクリプトは、プレイヤーのためのleaderstatsフォルダを作成し、プレイヤーが死亡すると時間がリセットされます。</p>
+<pre><code id="advancedleaderstats">
+    local Players = game:GetService("Players")
+
+    function onPlayerAdded(player)
+        local character = player.Character or player.CharacterAdded:Wait()
+        local humanoid = character:WaitForChild("Humanoid")
+    
+        local leaderstats = Instance.new("Folder")
+        leaderstats.Name = "leaderstats"
+        leaderstats.Parent = player
+    
+        local timeValue = Instance.new("IntValue")
+        timeValue.Name = "Time"
+        timeValue.Value = 0
+        timeValue.Parent = leaderstats
+    
+        local deathValue = Instance.new("IntValue")
+        deathValue.Name = "Deaths"
+        deathValue.Value = 0
+        deathValue.Parent = leaderstats
+    
+        spawn(function()
+            while true do
+                wait(1)
+                timeValue.Value = timeValue.Value + 1
+            end
+        end)
+    
+        humanoid.Died:Connect(function()
+            deathValue.Value = deathValue.Value + 1
+            timeValue.Value = 0
+        end)
+    end
+    
+    Players.PlayerAdded:Connect(onPlayerAdded)
+    
+</code></pre>
+<button onclick="copyToClipboard('advancedleaderstats')">コピーする</button>
+
+<script>
+    function copyToClipboard(id) {
+        const code = document.getElementById(id).textContent.trim();
+        const textarea = document.createElement('textarea');
+        textarea.value = code;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        alert('コピーしました！');
+    }
+</script>
+</body
+<h2>レーザーガンスクリプト</h2>
+<p>このスクリプトは、プレイヤーのためのleaderstatsフォルダを作成し、プレイヤーが死亡すると時間がリセットされます。</p>
+<pre><code id="Basic-Leaderstats">
+    local Players = game:GetService("Players")
+
+    function onPlayerAdded(player)
+        local leaderstats = Instance.new("Folder", player)
+        leaderstats.Name = "leaderstats"
+    
+        local Coins = Instance.new("IntValue", leaderstats)
+        Coins.Name = "Coins"
+        Coins.Value = 0
+
+    Players.PlayerAdded:Connect(onPlayerAdded)
+    
+</code></pre>
+<button onclick="copyToClipboard('Basic-Leaderstats')">コピーする</button>
+
+<script>
+    function copyToClipboard(id) {
+        const code = document.getElementById(id).textContent.trim();
+        const textarea = document.createElement('textarea');
+        textarea.value = code;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        alert('コピーしました！');
+    }
+</script>
+</body
